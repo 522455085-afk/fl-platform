@@ -1,12 +1,6 @@
 {
-  "rules": [
-    {
-      "match": { "uri": "/" },
-      "action": { "rewrite": { "target": "/index.html" } }
-    },
-    {
-      "match": { "uri": "/login" },
-      "action": { "rewrite": { "target": "/login/index.html" } }
-    }
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/login", "destination": "/login/index.html" }
   ]
 }
