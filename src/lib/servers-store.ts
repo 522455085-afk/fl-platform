@@ -398,6 +398,7 @@ export const useServers = create<Store>()((set, get) => ({
         .where({ server_id: serverId })
         .limit(200)
         .get();
+      console.log("[disband] step1 members:", memberRes?.data?.length ?? "NO_DATA");
       let memberRows = (memberRes?.data || []) as { _id: string }[];
       for (const row of memberRows) {
         try { await db.collection("server_members").doc(row._id).remove(); } catch {}
