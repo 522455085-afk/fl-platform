@@ -38,6 +38,9 @@ yarn-error.log*
 # edge functions (causes deploy timeout on EdgeOne)
 /functions/
 
+# netlify (legacy deployment)
+/.netlify/
+
 # vercel
 .vercel
 
