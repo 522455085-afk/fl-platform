@@ -1,3 +1,3 @@
 # EdgeOne Pages 路由规则
-# 根路径 → 回退到 index.html
-/  /index.html  200
+# SPA 回退：所有路径回退到 index.html
+/*  /index.html  200
