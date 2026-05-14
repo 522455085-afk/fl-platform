@@ -6,8 +6,6 @@ const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
   trailingSlash: true,
-  // Put export output in dist/ so it's a clean folder to upload.
-  distDir: "dist",
 
   // Ignore TypeScript errors during build (type definitions are incomplete)
   typescript: {
