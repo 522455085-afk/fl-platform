@@ -392,13 +392,41 @@ export const useServers = create<Store>()((set, get) => ({
     const me = useAuth.getState().user;
     if (!me) return { ok: false, error: "未登录" };
     try {
-      // Remove every membership row.
-      await db
+      // Step 1: fetch & remove membership rows individually
+      let memberRes = await db
         .collection("server_members")
         .where({ server_id: serverId })
-        .remove();
-      // Remove the server row.
-      await db.collection("servers").where({ id: serverId }).remove();
+        .limit(200)
+        .get();
+      let memberRows = (memberRes?.data || []) as { _id: string }[];
+      for (const row of memberRows) {
+        try { await db.collection("server_members").doc(row._id).remove(); } catch {}
+      }
+      // Paginate if >200
+      while (memberRows.length >= 200) {
+        memberRes = await db
+          .collection("server_members")
+          .where({ server_id: serverId })
+          .skip(memberRows.length)
+          .limit(200)
+          .get();
+        const next = (memberRes?.data || []) as { _id: string }[];
+        if (next.length === 0) break;
+        for (const row of next) {
+          try { await db.collection("server_members").doc(row._id).remove(); } catch {}
+        }
+        memberRows = next;
+      }
+      // Step 2: remove the server row by querying first
+      const s = await db
+        .collection("servers")
+        .where({ id: serverId })
+        .limit(1)
+        .get();
+      const serverRows = (s?.data || []) as { _id: string }[];
+      for (const row of serverRows) {
+        await db.collection("servers").doc(row._id).remove();
+      }
       await get().refresh();
       await useServerRoles.getState().refresh();
       return { ok: true };
