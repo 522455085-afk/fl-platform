@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "node -e \"var f=require('fs'),p=require('path');function d(d){f.readdirSync(d).forEach(n=>{var fp=p.join(d,n);f.statSync(fp).isDirectory()?d(fp):n.endsWith('.txt')&&f.unlinkSync(fp)})};d('out')\"",
+    "postbuild": "node scripts/clean-txt.js",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
