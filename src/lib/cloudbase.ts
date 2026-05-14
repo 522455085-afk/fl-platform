@@ -3,7 +3,7 @@
 import cloudbase from "@cloudbase/js-sdk";
 import type { ICloudBaseApp, IDatabase, IDatabaseCommand, IAuth } from "@/lib/types";
 
-const ENV_ID = process.env.NEXT_PUBLIC_CLOUDBASE_ENV_ID || "";
+const ENV_ID = process.env.NEXT_PUBLIC_CLOUDBASE_ENV_ID || "fl-platform-d9ggvxhq738a2a52a";
 
 const isBrowser = typeof window !== "undefined";
 
