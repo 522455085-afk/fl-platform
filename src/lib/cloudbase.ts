@@ -30,6 +30,24 @@ const isBrowser = typeof window !== "undefined";
  */
 if (isBrowser && !(globalThis as { __fl_cb_console_patched?: boolean }).__fl_cb_console_patched) {
   (globalThis as { __fl_cb_console_patched?: boolean }).__fl_cb_console_patched = true;
+
+  // CloudBase SDK sometimes emits unhandled rejections from its internal
+  // watch/WebSocket code (e.g. "Cannot read property 'code' of undefined").
+  // These are non-fatal (the HTTP poll fallback keeps working), so we silence
+  // them to prevent the browser's "Uncaught (in promise)" error overlay.
+  window.addEventListener("unhandledrejection", (event) => {
+    const reason = event.reason;
+    const msg = reason instanceof Error ? reason.message : String(reason);
+    if (
+      msg.includes("Cannot read property 'code' of undefined") ||
+      msg.includes("SYS_ERR") ||
+      (reason instanceof Error && reason.stack?.includes("cloudbase")?.valueOf() === true)
+    ) {
+      event.preventDefault(); // silence the error
+      console.debug("[cb-rt silenced unhandledrejection]", reason);
+    }
+  });
+
   const origError = console.error.bind(console);
   console.error = (...args: unknown[]) => {
     const first = args[0];
@@ -173,24 +191,10 @@ if (canInit) {
     console.error("[cloudbase] init failed:", e);
   }
 
-  // CloudBase SDK internally rejects a promise with a SYS_ERR payload when a
-  // watch init hiccups (see `Cannot read property 'code' of undefined`). The
-  // rejection happens deep inside the SDK's WebSocket handler, so we can't
-  // wrap it with a try/catch at our call sites. Instead, register a
-  // window-level handler that swallows just this specific message so the
-  // DevTools console isn't spammed. Other rejections propagate normally.
-  if (typeof window !== "undefined") {
-    window.addEventListener("unhandledrejection", (ev) => {
-      const reason = ev.reason;
-      const msg = (reason as { message?: string })?.message || String(reason || "");
-      if (
-        msg.includes("Cannot read property 'code' of undefined") ||
-        msg.includes("SYS_ERR")
-      ) {
-        ev.preventDefault();
-      }
-    });
-  }
+  // Note: CloudBase SDK websocket may emit SYS_ERR / "Cannot read property
+  // 'code' of undefined" as unhandled rejections during watch lifecycle
+  // (reconnect, ping-pong, etc.). These are non-fatal noise — the HTTP
+  // poll fallback keeps everything working.
 }
 
 export const app: ICloudBaseApp | null = _app;
