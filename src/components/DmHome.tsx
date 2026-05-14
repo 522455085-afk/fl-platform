@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 /**
  * Right-side content shown when the user is in DM view but hasn't opened a
  * specific conversation. Renders a friend card grid (KOOK-style) driven by
@@ -338,9 +340,19 @@ function PendingSection({
 }: {
   incoming: FriendshipRow[];
   outgoing: FriendshipRow[];
-  onAccept: (id: string) => void;
-  onDecline: (id: string) => void;
+  onAccept: (id: string) => Promise<{ ok: boolean; error?: string }>;
+  onDecline: (id: string) => Promise<{ ok: boolean; error?: string }>;
 }) {
+  const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
+
+  const handleAccept = async (id: string) => {
+    setLoadingIds((prev) => new Set(prev).add(id));
+    try { await onAccept(id); } finally { setLoadingIds((prev) => { const next = new Set(prev); next.delete(id); return next; }); }
+  };
+  const handleDecline = async (id: string) => {
+    setLoadingIds((prev) => new Set(prev).add(id));
+    try { await onDecline(id); } finally { setLoadingIds((prev) => { const next = new Set(prev); next.delete(id); return next; }); }
+  };
   if (incoming.length === 0 && outgoing.length === 0) {
     return (
       <div className="py-16 text-center text-[var(--text-muted)] italic">
@@ -375,13 +387,14 @@ function PendingSection({
                   </div>
                 </div>
                 <button
-                  onClick={() => onAccept(f.id)}
-                  className="text-xs px-3 h-7 rounded bg-[var(--success)]/20 text-[var(--success)] hover:bg-[var(--success)]/40"
+                  onClick={() => handleAccept(f.id)}
+                  disabled={loadingIds.has(f.id)}
+                  className="text-xs px-3 h-7 rounded bg-[var(--success)]/20 text-[var(--success)] hover:bg-[var(--success)]/40 disabled:opacity-50"
                 >
-                  接受
+                  {loadingIds.has(f.id) ? "…" : "接受"}
                 </button>
                 <button
-                  onClick={() => onDecline(f.id)}
+                  onClick={() => handleDecline(f.id)}
                   className="text-xs px-3 h-7 rounded bg-[var(--danger)]/20 text-[var(--danger)] hover:bg-[var(--danger)]/40"
                 >
                   拒绝

@@ -403,8 +403,8 @@ export const useServers = create<Store>()((set, get) => ({
       await useServerRoles.getState().refresh();
       return { ok: true };
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      return { ok: false, error: msg };
+      const rawMsg = e instanceof Error ? e.message : String(e);
+      return { ok: false, error: friendlyCloudBaseError(rawMsg, "解散服务器失败") };
     }
   },
 
@@ -675,15 +675,8 @@ export const useServers = create<Store>()((set, get) => ({
       // Roll back the optimistic update on failure.
       set({ custom: prevCustom, officialOverrides: prevOfficialOverrides });
       const msg = e instanceof Error ? e.message : String(e);
-       
-      console.error(
-        "[servers] updateServer FAILED — check CloudBase rule for `servers` " +
-          "(creator/admin only), or icon_url size. Patch was:",
-        Object.keys(dbPatch).join(","),
-        "Raw error:",
-        e,
-      );
-      return { ok: false, error: msg };
+      const friendly = friendlyCloudBaseError(msg, "保存失败");
+      return { ok: false, error: friendly };
     }
   },
 
@@ -698,8 +691,8 @@ export const useServers = create<Store>()((set, get) => ({
       await get().refresh();
       return { ok: true };
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      return { ok: false, error: msg };
+      const rawMsg = e instanceof Error ? e.message : String(e);
+      return { ok: false, error: friendlyCloudBaseError(rawMsg, "切换私密状态失败") };
     }
   },
 

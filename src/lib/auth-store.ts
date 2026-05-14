@@ -19,8 +19,9 @@ import { claimSession, releaseSession, resetKickLatch } from "@/lib/sessions";
 import type { ICloudBaseApp } from "@/lib/types";
 
 const PROFILE_CACHE_PREFIX = "fl_pcache_";
-// Cache expires after 24 hours to ensure fresh data is loaded periodically
-const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+// Cache expires after 5 minutes — frequent enough to stay fresh but
+// short enough to avoid stale data issues (avatar default, etc.)
+const CACHE_EXPIRY_MS = 5 * 60 * 1000;
 
 interface CachedProfile {
   user: AuthUser;

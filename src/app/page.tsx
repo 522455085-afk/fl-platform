@@ -59,6 +59,7 @@ import MentionHighlightOverlay from "@/components/MentionHighlightOverlay";
 import MentionAutocomplete, { type MentionApi } from "@/components/MentionAutocomplete";
 import OfflineBanner from "@/components/OfflineBanner";
 import { usePresence } from "@/lib/use-presence";
+import { useDmView } from "@/lib/dm-view-store";
 
 export default function Home() {
   const router = useRouter();
@@ -510,6 +511,7 @@ export default function Home() {
     const onNavFriends = () => {
       setView("dm");
       setActiveServerId("home");
+      useDmView.getState().setCategory("requests");
     };
     document.addEventListener("fl:navigate-friends", onNavFriends);
 
