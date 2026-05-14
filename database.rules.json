@@ -1,0 +1,46 @@
+{
+  "messages": {
+    "read": "auth != null",
+    "write": "auth != null && doc.author_id == auth.uid"
+  },
+  "message_reactions": {
+    "read": "auth != null",
+    "write": "auth != null && doc.user_id == auth.uid"
+  },
+  "friendships": {
+    "read": "doc.requester_id == auth.uid || doc.addressee_id == auth.uid",
+    "write": "auth != null && (doc.requester_id == auth.uid || doc.addressee_id == auth.uid)"
+  },
+  "blocks": {
+    "read": "doc.blocker_id == auth.uid",
+    "write": "auth != null && doc.blocker_id == auth.uid"
+  },
+  "bans": {
+    "read": "auth != null",
+    "write": "false"
+  },
+  "mutes": {
+    "read": "auth != null",
+    "write": "false"
+  },
+  "sessions": {
+    "read": "auth != null && doc.user_id == auth.uid",
+    "write": "auth != null && doc.user_id == auth.uid"
+  },
+  "profiles": {
+    "read": "auth != null",
+    "write": "auth != null && doc.user_id == auth.uid"
+  },
+  "servers": {
+    "read": "auth != null",
+    "write": "auth != null && doc.creator_id == auth.uid"
+  },
+  "server_members": {
+    "read": "auth != null",
+    "write": "auth != null && doc.user_id == auth.uid"
+  },
+  "dm_threads": {
+    "read": "auth != null && (doc.user1_id == auth.uid || doc.user2_id == auth.uid)",
+    "write": "auth != null && (doc.user1_id == auth.uid || doc.user2_id == auth.uid)"
+  }
+}

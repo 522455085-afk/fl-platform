@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  /* ForgottenLand brand palette: deep aubergine + ember gold */
+  --background: #1f1830;
+  --foreground: #e8def0;
+  --bg-darkest: #0a0712;
+  /* 2026-05 user feedback: --bg-darker was too close to --bg-darkest
+   * (#17112a vs #0e0a18), making the channel sidebar visually merge
+   * with the server rail beside it ("和左侧服务器栏的颜色重复导致
+   * 割裂感"). Pushed it noticeably lighter + slightly more
+   * saturated so the column reads as a distinct surface against
+   * the near-black rail. */
+  --bg-darker: #1d1738;
+  --bg-dark: #1f1830;
+  --bg-mid: #2a2240;
+  --bg-light: #3a2e58;
+  /* Dedicated tone for the bottom user card + voice connection
+   * panel — sits between --bg-darker and --bg-dark on the
+   * brightness ladder and uses a slightly more saturated purple
+   * so it reads as a distinct surface against:
+   *   • server rail   (--bg-darkest, near-black)
+   *   • channel sidebar / member list (--bg-darker)
+   *   • chat / composer area (--bg-dark)
+   * Per repeated user feedback: "不要和任何一个面板重色". */
+  --bg-userbar: #261e3f;
+  --accent: #d4a056;          /* ember gold */
+  --accent-hover: #b88836;
+  --accent-glow: rgba(212, 160, 86, 0.35);
+  --success: #6db26d;          /* aged moss green */
+  --danger: #c64b3e;           /* dimmed ember red */
+  --warning: #e8b04a;
+  --magic: #9b6dd9;            /* arcane purple, replaces Discord blurple where used */
+  --text-muted: #9a8fb0;
+  --text-normal: #e8def0;
+  --text-bright: #fff8e8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-bg-darkest: var(--bg-darkest);
+  --color-bg-darker: var(--bg-darker);
+  --color-bg-dark: var(--bg-dark);
+  --color-bg-mid: var(--bg-mid);
+  --color-bg-light: var(--bg-light);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-text-muted: var(--text-muted);
+  --color-text-normal: var(--text-normal);
+  --color-text-bright: var(--text-bright);
+}
+
+html, body {
+  height: 100%;
+  background:
+    radial-gradient(ellipse at top left, rgba(155, 109, 217, 0.08), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(212, 160, 86, 0.06), transparent 50%),
+    var(--bg-dark);
+  color: var(--text-normal);
+  font-family: "Cinzel", "Noto Serif SC", "Source Han Serif", "Georgia", serif;
+  overflow: hidden;
+}
+
+/* Body text uses a more readable sans, only headings get the fantasy serif */
+input, textarea, button, .ui-sans, p, span, div, li {
+  font-family: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* Glow utility for accent elements */
+.fl-glow {
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* User feedback (2026-05): the previous thumb used --bg-darkest which
+ * on dark-blue / purple themes read as a near-black bar — too saturated
+ * against panel backgrounds. Switching to a translucent neutral grey so
+ * the thumb reads as "just a scrollbar" instead of a coloured stripe.
+ * `color-mix` gives us a single rule that automatically tints with the
+ * page's text colour, so it stays readable across light/dark themes. */
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 180, 190, 0.35);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 200, 210, 0.55);
+}
+/* Firefox uses a different API. */
+* {
+  scrollbar-color: rgba(180, 180, 190, 0.35) transparent;
+  scrollbar-width: thin;
+}
+
+/* `.no-scrollbar` — opt-out class used by tightly-cropped vertical
+ * lists (e.g. the server rail) where we want overflow:auto behaviour
+ * but no visible scrollbar at all. Previously this class was
+ * referenced in JSX but never declared, so Firefox still painted a
+ * thin scrollbar (per the global `scrollbar-color` rule above) and
+ * the user spotted it as a stray horizontal bar at the bottom of the
+ * server rail. Hides both axes across all engines. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ===========================================================
+ * Mobile / PWA utilities
+ * ===========================================================
+ * `viewport-fit=cover` in layout.tsx lets us draw into the iPhone notch
+ * and home-indicator regions. These utilities expose the safe-area insets
+ * so components can opt in where needed (bottom nav, top header, etc.).
+ *
+ * Usage:
+ *   <div class="pb-safe">  → padding-bottom = safe-area-inset-bottom
+ *   <div class="pt-safe">  → padding-top    = safe-area-inset-top
+ *   <div class="min-h-svh">→ newer small-viewport-height unit (iOS keyboard)
+ */
+.pt-safe   { padding-top:    env(safe-area-inset-top, 0px); }
+.pb-safe   { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.pl-safe   { padding-left:   env(safe-area-inset-left, 0px); }
+.pr-safe   { padding-right:  env(safe-area-inset-right, 0px); }
+.mt-safe   { margin-top:    env(safe-area-inset-top, 0px); }
+.mb-safe   { margin-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Prevent iOS Safari from zooming the viewport when an input gets focus.
+ * Safari only triggers the auto-zoom when the input's computed font-size
+ * is < 16px; forcing ≥ 16px at the base level kills the behavior without
+ * touching visual design (most labels already render at 14-15px so this
+ * applies only to form controls themselves). */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Disable native tap highlight flash on interactive elements; we render
+ * our own hover / active states via Tailwind. */
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+

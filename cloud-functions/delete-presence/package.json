@@ -1,0 +1,9 @@
+{
+  "name": "delete-presence",
+  "version": "1.0.0",
+  "description": "Best-effort presence row removal triggered by browser sendBeacon on tab close.",
+  "main": "index.js",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^3.5.0"
+  }
+}

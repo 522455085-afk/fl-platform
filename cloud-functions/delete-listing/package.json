@@ -1,0 +1,9 @@
+{
+  "name": "delete-listing",
+  "version": "1.0.0",
+  "description": "Privileged deletion of trade/auction listings, bypassing CloudBase security rules.",
+  "main": "index.js",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^2.0.0"
+  }
+}

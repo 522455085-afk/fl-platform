@@ -1,0 +1,10 @@
+{
+  "name": "delete-user",
+  "version": "1.0.0",
+  "description": "Privileged hard-delete of the calling user's account + data.",
+  "main": "index.js",
+  "dependencies": {
+    "@cloudbase/node-sdk": "^3.5.0",
+    "@cloudbase/manager-node": "^4.5.0"
+  }
+}
