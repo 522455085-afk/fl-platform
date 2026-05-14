@@ -45,7 +45,7 @@ export default function ConfirmDialog() {
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60"
       onMouseDown={(e) => e.target === e.currentTarget && onBackdrop()}
     >
       <div className="bg-[var(--bg-darker)] rounded-xl border border-[var(--bg-mid)] shadow-2xl p-6 w-full max-w-sm mx-4 flex flex-col gap-4">

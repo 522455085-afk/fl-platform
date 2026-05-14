@@ -181,6 +181,7 @@ if (canInit) {
   // DevTools console isn't spammed. Other rejections propagate normally.
   if (typeof window !== "undefined") {
     window.addEventListener("unhandledrejection", (ev) => {
+      const reason = ev.reason;
       const msg = (reason as { message?: string })?.message || String(reason || "");
       if (
         msg.includes("Cannot read property 'code' of undefined") ||
