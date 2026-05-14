@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // All auth & data calls happen client-side, so we don't need a Node server.
   output: "export",
   images: { unoptimized: true },
-  trailingSlash: true,
+  // trailingSlash disabled — EdgeOne Pages doesn't need directory-index serving
 
   // Ignore TypeScript errors during build (type definitions are incomplete)
   typescript: {
